@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Forecast App</title>
+    <meta
+      name="description"
+      content="Beautiful weather forecast app with 15-day outlook, real-time updates, and stunning design"
+    />
+
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/lucide-angular@0.544.0/+esm"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/lucide-angular@0.544.0/+esm"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="weather-container">
+      <!-- Header -->
+      <header class="weather-header">
+        <div class="header-left">
+          <i data-lucide="map-pin" class="icon-primary"></i>
+          <h1>Weather Forecast</h1>
+        </div>
+
+        <div class="header-actions">
+          <div class="search-container">
+            <input
+              type="text"
+              [(ngModel)]="cityInput"
+              (keyup.enter)="fetchWeatherData()"
+              placeholder="Enter city name"
+              class="search-input"
+            />
+            <button
+              (click)="fetchWeatherData()"
+              class="search-btn"
+              title="Search city"
+            >
+              <span>Search</span>
+              <i data-lucide="search" class="icon-sm"></i>
+            </button>
+          </div>
+
+          <button
+            class="refresh-btn"
+            (click)="refreshWeather()"
+            title="Refresh weather data"
+          >
+            <i data-lucide="refresh-cw" class="icon-refresh"></i>
+            Refresh
+          </button>
+        </div>
+      </header>
+
+      <!-- Current Weather -->
+      <div class="current-weather-card animate-float" *ngIf="weatherData">
+        <div class="current-weather-grid">
+          <!-- Weather Icon -->
+          <div class="weather-icon-container">
+            <i
+              [attr.data-lucide]="
+                getWeatherIconName(weatherData.currentConditions.conditions)
+              "
+              class="weather-icon animate-pulse-glow"
+            ></i>
+          </div>
+
+          <!-- Main Weather Info -->
+          <div class="weather-main-info">
+            <h2 class="location">{{ weatherData.resolvedAddress }}</h2>
+            <div class="temperature-main">
+              {{ fahrenheitToCelsius(weatherData.currentConditions.temp) }}°C
+            </div>
+            <p class="condition-main">
+              {{ weatherData.currentConditions.conditions }}
+            </p>
+          </div>
+
+          <!-- Weather Stats -->
+          <div class="weather-stats-grid">
+            <div class="stat-card">
+              <i data-lucide="eye" class="stat-icon"></i>
+              <p class="stat-label">Feels like</p>
+              <p class="stat-value">
+                {{
+                  fahrenheitToCelsius(weatherData.currentConditions.feelslike)
+                }}°C
+              </p>
+            </div>
+
+            <div class="stat-card">
+              <i data-lucide="droplets" class="stat-icon"></i>
+              <p class="stat-label">Humidity</p>
+              <p class="stat-value">
+                {{ weatherData.currentConditions.humidity }}%
+              </p>
+            </div>
+
+            <div class="stat-card">
+              <i data-lucide="wind" class="stat-icon"></i>
+              <p class="stat-label">Wind</p>
+              <p class="stat-value">
+                {{ weatherData.currentConditions.windspeed }} km/h
+              </p>
+            </div>
+
+            <div class="stat-card">
+              <i data-lucide="sunrise" class="stat-icon"></i>
+              <p class="stat-label">Sunrise</p>
+              <p class="stat-value">
+                {{ weatherData.currentConditions.sunrise }}
+              </p>
+            </div>
+
+            <div class="stat-card">
+              <i data-lucide="sunset" class="stat-icon"></i>
+              <p class="stat-label">Sunset</p>
+              <p class="stat-value">
+                {{ weatherData.currentConditions.sunset }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7-Day Forecast -->
+      <section class="forecast-section" *ngIf="weatherData?.days">
+        <h2 class="forecast-title">15-Day Forecast</h2>
+        <div class="forecast-grid">
+          <div
+            class="forecast-card glass-card"
+            *ngFor="let day of weatherData.days; let i = index"
+            [class.today-card]="i === 0"
+          >
+            <h3 class="day-title">
+              {{ i === 0 ? "Today" : formatDate(day.datetime) }}
+            </h3>
+
+            <div class="forecast-icon-container">
+              <i
+                [attr.data-lucide]="getWeatherIconName(day.conditions)"
+                class="forecast-icon"
+                [class]="getWeatherIconClass(day.conditions)"
+              ></i>
+            </div>
+
+            <p class="forecast-condition">{{ day.conditions }}</p>
+
+            <div class="forecast-temps">
+              <div class="temp-main">
+                <span class="temperature-mild">
+                  {{ fahrenheitToCelsius(day.temp) }}°C
+                </span>
+              </div>
+
+              <div class="temp-range">
+                <div class="temp-high">
+                  <span class="temp-label">Max:</span>
+                  <span class="temperature-warm">
+                    {{ fahrenheitToCelsius(day.tempmax) }}°C
+                  </span>
+                </div>
+                <div class="temp-low">
+                  <span class="temp-label">Min:</span>
+                  <span class="temperature-cool">
+                    {{ fahrenheitToCelsius(day.tempmin) }}°C
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Loading State -->
+      <!-- <div class="loading-container" *ngIf="isLoading">
+        <div class="loading-card glass-card">
+          <i data-lucide="loader-2" class="loading-icon"></i>
+          <p>Loading weather data...</p>
+        </div>
+      </div> -->
+
+      <!-- Error State -->
+      <!-- <div class="error-container" *ngIf="error">
+        <div class="error-card glass-card">
+          <i data-lucide="alert-circle" class="error-icon"></i>
+          <h3>Oops! Something went wrong</h3>
+          <p>{{ error }}</p>
+          <button class="retry-btn" (click)="refreshWeather()">
+            <i data-lucide="refresh-cw" class="icon-sm"></i>
+            Try Again
+          </button>
+        </div>
+      </div> -->
+
+      <!-- Last Updated -->
+      <footer class="last-updated" *ngIf="lastUpdated">
+        <p>
+          Last updated: <span>{{ lastUpdated | date: "medium" }}</span>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
