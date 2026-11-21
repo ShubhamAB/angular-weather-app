@@ -4,18 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather Forecast App</title>
+
     <meta
       name="description"
       content="Beautiful weather forecast app with 15-day outlook, real-time updates, and stunning design"
-    />
-
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/lucide-angular@0.544.0/+esm"
-    ></script>
-    <link
-      href="https://cdn.jsdelivr.net/npm/lucide-angular@0.544.0/+esm"
-      rel="stylesheet"
     />
   </head>
 
@@ -24,7 +16,7 @@
       <!-- Header -->
       <header class="weather-header">
         <div class="header-left">
-          <i data-lucide="map-pin" class="icon-primary"></i>
+          <i class="fa-solid fa-chart-line"></i>
           <h1>Weather Forecast</h1>
         </div>
 
@@ -34,7 +26,7 @@
               type="text"
               [(ngModel)]="cityInput"
               (keyup.enter)="fetchWeatherData()"
-              placeholder="Enter city name"
+              placeholder="Search City"
               class="search-input"
             />
             <button
@@ -42,8 +34,7 @@
               class="search-btn"
               title="Search city"
             >
-              <span>Search</span>
-              <i data-lucide="search" class="icon-sm"></i>
+              <i class="fa-solid fa-magnifying-glass"></i>
             </button>
           </div>
 
@@ -52,7 +43,7 @@
             (click)="refreshWeather()"
             title="Refresh weather data"
           >
-            <i data-lucide="refresh-cw" class="icon-refresh"></i>
+            <i class="fa-solid fa-arrows-rotate"></i>
             Refresh
           </button>
         </div>
@@ -85,7 +76,7 @@
           <!-- Weather Stats -->
           <div class="weather-stats-grid">
             <div class="stat-card">
-              <i data-lucide="eye" class="stat-icon"></i>
+              <i class="fa-solid fa-temperature-half stat-icon"></i>
               <p class="stat-label">Feels like</p>
               <p class="stat-value">
                 {{
@@ -95,7 +86,7 @@
             </div>
 
             <div class="stat-card">
-              <i data-lucide="droplets" class="stat-icon"></i>
+              <i class="fa-solid fa-droplet stat-icon"></i>
               <p class="stat-label">Humidity</p>
               <p class="stat-value">
                 {{ weatherData.currentConditions.humidity }}%
@@ -103,7 +94,8 @@
             </div>
 
             <div class="stat-card">
-              <i data-lucide="wind" class="stat-icon"></i>
+              <!-- <i data-lucide="wind" class="stat-icon"></i> -->
+              <i class="fa-solid fa-wind stat-icon"></i>
               <p class="stat-label">Wind</p>
               <p class="stat-value">
                 {{ weatherData.currentConditions.windspeed }} km/h
@@ -111,7 +103,7 @@
             </div>
 
             <div class="stat-card">
-              <i data-lucide="sunrise" class="stat-icon"></i>
+              <i class="fa-solid fa-sun stat-icon"></i>
               <p class="stat-label">Sunrise</p>
               <p class="stat-value">
                 {{ weatherData.currentConditions.sunrise }}
@@ -119,8 +111,8 @@
             </div>
 
             <div class="stat-card">
-              <i data-lucide="sunset" class="stat-icon"></i>
-              <p class="stat-label">Sunset</p>
+              <i class="fa-solid fa-cloud-sun stat-icon"></i>
+              <p class="stat-label">Suset</p>
               <p class="stat-value">
                 {{ weatherData.currentConditions.sunset }}
               </p>
